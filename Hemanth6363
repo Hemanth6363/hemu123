@@ -223,4 +223,296 @@ int myAtoi(char* s) {
         if (!is_num(*s)) {
             return res;
         }
+#include <stdbool.h>
+#include <string.h>
+
+int memo[21][21]; // memo[i][j] - stores result of < isMatch(s[i..], p[j..]) >;
+
+// isMatchHelper(i, j) - whether s[i..] matches p[j..];
+bool isMatchHelper(int i, int j, char *s, char *p) {
+    if (memo[i][j] != -1) {
+        return memo[i][j];
+    }
+
+    bool ans;
+    if (p[j] == '\0') {
+        ans = (s[i] == '\0'); // Both strings reached the end;
+    } else {
+        bool first_match = (s[i] != '\0' && (p[j] == s[i] || p[j] == '.'));
+
+        if (p[j + 1] == '*') {
+            // Try zero occurrence or one/more occurrences;
+            ans = isMatchHelper(i, j + 2, s, p) || (first_match && isMatchHelper(i + 1, j, s, p));
+        } else {
+            ans = first_match && isMatchHelper(i + 1, j + 1, s, p);
+        }
+    }
+
+    memo[i][j] = ans;
+    return ans;
+}
+
+bool isMatch(char *s, char *p) {
+    memset(memo, -1, sizeof(memo)); // Initialize memoization table;
+    return isMatchHelper(0, 0, s, p);
+}
+int maxArea(int* height, int heightSize) {
+    int max_area = INT_MIN, i = 0, j = heightSize - 1;
+    while(i < j) {
+        if(height[i] > height[j]) {
+            if(max_area < height[j] * (j - i))
+                max_area = height[j] * (j - i);
+            j--;
+        }
+        else {
+            if(max_area < height[i] * (j - i))
+                max_area = height[i] * (j - i);
+            i++;
+        }
+    }
+    return max_area;
+}
+char* intToRoman(int num) {
+    // Allocate enough memory for the result string
+    // Max length of Roman numeral for numbers up to 3999 is 15 (e.g., "MMMCMXCIX")
+    char* s = (char*)malloc(20 * sizeof(char)); 
+    int i = 0;
+    
+    // Handle the largest values first (greedy approach)
+    while (num >= 1000) {
+        s[i++] = 'M';
+        num -= 1000;
+    }
+    
+    // Check for 900 (CM)
+    if (num >= 900) {
+        s[i++] = 'C';
+        s[i++] = 'M';
+        num -= 900;
+    }
+    
+    // Handle 500 (D)
+    while (num >= 500) {
+        s[i++] = 'D';
+        num -= 500;
+    }
+    
+    // Check for 400 (CD)
+    if (num >= 400) {
+        s[i++] = 'C';
+        s[i++] = 'D';
+        num -= 400;
+    }
+    
+    // Handle 100 (C)
+    while (num >= 100) {
+        s[i++] = 'C';
+        num -= 100;
+    }
+    
+    // Check for 90 (XC)
+    if (num >= 90) {
+        s[i++] = 'X';
+        s[i++] = 'C';
+        num -= 90;
+    }
+    
+    // Handle 50 (L)
+    while (num >= 50) {
+        s[i++] = 'L';
+        num -= 50;
+    }
+    
+    // Check for 40 (XL)
+    if (num >= 40) {
+        s[i++] = 'X';
+        s[i++] = 'L';
+        num -= 40;
+    }
+    
+    // Handle 10 (X)
+    while (num >= 10) {
+        s[i++] = 'X';
+        num -= 10;
+    }
+    
+    // Check for 9 (IX)
+    if (num >= 9) {
+        s[i++] = 'I';
+        s[i++] = 'X';
+        num -= 9;
+    }
+    
+    // Handle 5 (V)
+    while (num >= 5) {
+        s[i++] = 'V';
+        num -= 5;
+    }
+    
+    // Check for 4 (IV)
+    if (num >= 4) {
+        s[i++] = 'I';
+        s[i++] = 'V';
+        num -= 4;
+    }
+    
+    // Handle 1 (I)
+    while (num >= 1) {
+        s[i++] = 'I';
+        num -= 1;
+    }
+    
+    // Null-terminate the string
+    s[i] = '\0';
+    
+    // Return the constructed Roman numeral string
+    return s;
+}
+int getValue(char roman){
+    switch(roman){
+        case 'I': return 1;
+        case 'V': return 5;
+        case 'X': return 10;
+        case 'L': return 50;
+        case 'C': return 100;
+        case 'D': return 500;
+        case 'M': return 1000;
+        default : return 0; 
+    }
+}
+int romanToInt(char* s) {
+    int total =0;
+    int prevValue = 0;
+    for(int i = strlen(s)-1; i>=0; i--){
+        int currentvalue = getValue(s[i]);
+
+        if(currentvalue < prevValue){
+            total -= currentvalue;
+        }
+        else{
+            total += currentvalue;
+        }
+        prevValue = currentvalue;
+    }
+    return total;
+}
+
+
+char * longestCommonPrefix(char ** str, int size){
+
+    int i,j,flag=0,k=0,min=100000;
+    char *s = (char *)malloc(127*sizeof(char));
+    strcpy(s,"");
+    if(size==0)
+        return s;
+    char c;
+    for(i=0;i<size;i++)
+    {
+        if(min>strlen(str[i]))
+            min = strlen(str[i]);
+    }
+    for(i=0;i<min;i++,k++)
+    {
+        c = str[0][i];
+        for(j=0;j<size;j++)
+        {
+            if(str[j][i]!=c)
+            {
+                flag = 1;
+                break;
+            }
+        }
+    //    printf("%d ",flag);
+    //    printf("%d ",strlen(str[i]));
+        if(flag)
+            break;
+        else
+        {
+            s[k] = c;
+            s[k+1] = '\0';
+        }
+    }
+ //   printf("%s",s);
+    return s;
+}
+int cmp(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int** threeSum(int* nums, int numsSize, int* returnSize, int** returnColumnSizes) {
+    qsort(nums, numsSize, sizeof(int), cmp);
+
+    // Allocate memory for the result (matrix of triplets)
+    int** result = (int**)malloc(sizeof(int*) * (numsSize * numsSize));
+    *returnSize = 0;
+
+    for (int i = 0; i < numsSize - 2; i++) {
+        if (i > 0 && nums[i] == nums[i - 1]) continue; // Skip duplicate 'i' values
+
+        int left = i + 1;
+        int right = numsSize - 1;
+
+        while (left < right) {
+            int sum = nums[i] + nums[left] + nums[right];
+
+            if (sum == 0) {
+                // Found a valid triplet, allocate memory and store it
+                result[*returnSize] = (int*)malloc(sizeof(int) * 3);
+                result[*returnSize][0] = nums[i];
+                result[*returnSize][1] = nums[left];
+                result[*returnSize][2] = nums[right];
+                (*returnSize)++;
+
+                // Skip duplicate 'left' and 'right' values
+                while (left < right && nums[left] == nums[left + 1]) left++;
+                while (left < right && nums[right] == nums[right - 1]) right--;
+
+                left++;
+                right--;
+            } else if (sum < 0) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+
+    // Allocate and set returnColumnSizes
+    *returnColumnSizes = (int*)malloc(sizeof(int) * (*returnSize));
+    for (int i = 0; i < *returnSize; i++) {
+        (*returnColumnSizes)[i] = 3;
+    }
+
+    return result;
+}
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int threeSumClosest(int* nums, int numsSize, int target) {
+    qsort(nums, numsSize, sizeof(int), compare);
+    int closest = nums[0] + nums[1] + nums[2]; 
+
+    for (int i = 0; i < numsSize - 2; i++) {
+        int left = i + 1;
+        int right = numsSize - 1;
+
+        while (left < right) {
+            int sum = nums[i] + nums[left] + nums[right];
+            if (abs(target - sum) < abs(target - closest)) {
+                closest = sum; 
+            }
+
+            if (sum < target) {
+                left++;
+            } else if (sum > target) {
+                right--;
+            } else {
+                return sum; 
+            }
+        }
+    }
+
+    return closest;
+}
   
