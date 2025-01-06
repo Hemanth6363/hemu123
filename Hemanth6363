@@ -1,0 +1,226 @@
+int lengthOfLongestSubstring(char* s) {
+    if (!s || !*s) // Check if the string is empty
+        return 0;
+    
+    int charIndexMap[256]; // Assuming ASCII characters
+    memset(charIndexMap, -1, sizeof(charIndexMap)); // Initialize array with -1
+    
+    int maxLength = 0;
+    int startIndex = 0;
+    int i;
+    
+    for (i = 0; s[i] != '\0'; i++) {
+        // If the character is already in the map and its index is after the start index of the current substring,
+        // update the start index to the index after the last occurrence of the character
+        if (charIndexMap[s[i]] != -1 && charIndexMap[s[i]] >= startIndex) {
+            startIndex = charIndexMap[s[i]] + 1;
+        }
+        
+        // Update the index of the current character
+        charIndexMap[s[i]] = i;
+        
+        // Update the maximum length if the current substring is longer
+        if (i - startIndex + 1 > maxLength) {
+            maxLength = i - startIndex + 1;
+        }
+    }
+    
+    return maxLength;
+}
+double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {
+    double s;
+    int b;
+    int t[nums1Size+nums2Size];
+int i=0; int j=0; int k=0;
+// Merging two sorted arrays
+    while((i<nums1Size)&&(j<nums2Size))
+    {   if(nums1[i]<nums2[j])
+     {  t[k]=nums1[i];
+        i++;
+        k++;
+     }
+      else
+     {  t[k]=nums2[j];
+        j++;
+        k++;
+    }
+    }
+// If there are remaining elements in nums1
+    if(i== nums1Size)
+    {
+        while(j<nums2Size)
+        {   t[k]=nums2[j];
+            j++;
+            k++;
+        }
+    }
+// If there are remaining elements in nums2
+    if(j== nums2Size)
+    {
+        while(i<nums1Size)
+        {   t[k]=nums1[i];
+            i++;
+            k++;
+        }
+    }
+// Calculate the median
+    if((nums1Size+nums2Size)%2!=0)
+    {   // Odd length, return the middle element
+        b=t[(nums1Size+nums2Size)/2];
+        s=(double)b;
+        return(s);
+    }
+    else 
+    {   // Even length, return the average of the two middle elements
+        s=((double)((t[(nums1Size+nums2Size)/2])+(t[((nums1Size+nums2Size)/2)-1])))/2;
+        return(s);
+    }
+}
+char* longestPalindrome(char* s) {
+    char *start, *end;
+    char *p = s, *subStart = s;
+    int maxLen = 1;
+    while(*p){
+        start = p; end = p;
+        
+        while(*(end+1) && *(end+1) == *end){
+            end++; // skip duplicates
+        }
+        p = end + 1;
+        
+        while(*(end + 1) && (start > s) && *(end + 1) == *(start - 1)){
+            start--;
+            end++;
+        }
+        if(end - start + 1 > maxLen){
+            maxLen = end - start + 1;
+            subStart = start;
+        }
+    }
+    
+    char *rst = (char *) calloc(maxLen + 1, sizeof(char));
+    strncpy(rst, subStart, maxLen);
+    return rst;
+}
+char * convert(char * s, int numRows){
+    int size = strlen(s) + 5;
+    if (numRows == 1 || size-5 <= numRows ) return s;
+    
+    char **zigzag = (char**)calloc(numRows * size, sizeof(char));
+    for(int i = 0; i < numRows; i++) *(zigzag + i) = (char*) calloc(size, sizeof(char));
+    
+    int direction = -1, level = 0, i = 0; 
+    while( s[i] != '\0' ){
+        strncat(zigzag[level], &s[i++], 1);
+        if ( level % (numRows-1) == 0 ) direction *= -1;
+        level += direction;
+    }
+    strcpy(s, "");
+    for(int i = 0; i < numRows; i++)strcat(s, zigzag[i]);
+    
+    for(int i = 0; i < numRows; i++){
+        free(*(zigzag + i));
+    }
+    free(zigzag);
+    return s;
+}
+int reverse(int x){
+     int rev=0;
+       while(x){
+           if(rev>214748364||rev<(-214748364))
+           return 0;
+           rev=rev*10+x%10;
+           x/=10;
+       }
+       x=rev;
+       return x;
+}
+#include <limits.h>
+
+inline bool is_num(char s) {
+    return s >= '0' && s <= '9';
+}
+
+int myAtoi(char* s) {
+    long long res = 0;
+    bool is_negative = false;
+
+    if (!s || strlen(s) == 0) {
+        return res;
+    }
+
+    while (*s == ' ') {
+        s++;
+    }
+
+    if (*s == '-') {
+        is_negative = true;
+        s++;
+
+        if (!is_num(*s)) {
+            return res;
+        }
+    }
+
+    if (*s == '+') {
+        s++;
+
+        if (!is_num(*s)) {
+            return res;
+        }
+    }
+
+    long long temp = res;
+
+    while (is_num(*s)) {
+        temp = res * 10;
+        temp = temp + (*s - '0');
+        
+        if (temp > INT_MAX) {
+            res = is_negative ? INT_MIN : INT_MAX;
+            return res;
+        }
+        
+        res = temp;
+        s++;
+    }
+
+    if (is_negative) {
+        return res * -1;
+    }
+
+    return res;
+}#include <limits.h>
+
+inline bool is_num(char s) {
+    return s >= '0' && s <= '9';
+}
+
+int myAtoi(char* s) {
+    long long res = 0;
+    bool is_negative = false;
+
+    if (!s || strlen(s) == 0) {
+        return res;
+    }
+
+    while (*s == ' ') {
+        s++;
+    }
+
+    if (*s == '-') {
+        is_negative = true;
+        s++;
+
+        if (!is_num(*s)) {
+            return res;
+        }
+    }
+
+    if (*s == '+') {
+        s++;
+
+        if (!is_num(*s)) {
+            return res;
+        }
+  
