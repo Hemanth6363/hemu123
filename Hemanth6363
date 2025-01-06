@@ -515,4 +515,258 @@ int threeSumClosest(int* nums, int numsSize, int target) {
 
     return closest;
 }
-  
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+    if(head==NULL || (head->next==NULL)){
+        return NULL;
+    }
+    int i=0,a;
+    struct ListNode *temp,*d;
+    temp=head;
+    while(temp!=NULL){
+        i++;
+        temp=temp->next;
+    }
+    if(n==i)
+    return head->next;
+    temp=head;
+    a=i-n-1;
+    while(a!=0){
+        temp=temp->next;
+        a--;
+    }
+    d=temp->next;
+    temp->next=temp->next->next;
+    free(d);
+    return head;
+}
+bool isValid(char* s) {
+    int len =strlen(s);
+    char stack[len];
+    int top = -1;
+    for(int i=0;i<len;i++){
+        if(s[i]=='(' || s[i] == '{' || s[i] == '[' ){
+            stack[++top] = s[i];
+        }else{
+            if(top == -1 ||( s[i]==')'&&stack[top] != '(')||(s[i]=='}'&&stack[top] != '{')||(s[i]==']'&&stack[top]!='[')){
+                return false;
+            } 
+            top--;
+        } 
+    }  
+    return top == -1; 
+}
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+void insert (struct ListNode** head,int num){
+    struct ListNode* new = (struct ListNode*)malloc(sizeof(struct ListNode));
+    new->val = num;
+    new->next = NULL;
+
+    if(*head == NULL){
+        *head = new;
+    }else{
+        struct ListNode* temp = *head;
+        while(temp->next != NULL){
+            temp =temp->next;
+        }
+        temp->next = new;
+    }
+}
+
+struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2) {
+    struct ListNode* head = NULL;
+    while(list1 != NULL && list2 != NULL){
+        if(list1->val < list2->val){
+            insert(&head,list1->val);
+            list1 = list1->next;
+        }else{
+            insert(&head,list2->val);
+            list2 = list2->next;
+        }
+    }
+    while(list1 != NULL){
+        insert(&head,list1->val);
+        list1 = list1->next;
+    }
+    while(list2 != NULL){
+        insert(&head,list2->val);
+        list2 = list2->next;
+    }
+
+    return head;
+}
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+char **res;
+int resIdx;
+int strSize;
+void help(int l, int r, char* str, int strIdx) {
+    if(!(l||r)) {
+        res[resIdx] = (char*)calloc(strSize, sizeof(char));
+        strcpy(res[resIdx++], str);
+        return;
+    }
+    if(l) {
+        str[strIdx] = '(';
+        help(l-1, r, str, strIdx+1);
+    }
+    if(r-l) {
+        str[strIdx] = ')';
+        help(l, r-1, str, strIdx+1);
+    }
+}
+char** generateParenthesis(int n, int* returnSize) {
+    resIdx = 0;
+    strSize = n*2+1;
+    res = (char**)calloc(1<<(n*2), sizeof(char*));
+    char* str = (char*)calloc(strSize, sizeof(char));
+    help(n, n, str, 0);
+    *returnSize = resIdx;
+    return res;
+}
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+
+ struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2) {
+    struct ListNode* new_head=NULL;
+    struct ListNode* tail=NULL;
+
+    if (list1 == NULL){
+        return list2;
+    }
+    if(list2 == NULL){
+        return list1;
+    }
+
+    while(list1 != NULL && list2 != NULL){
+        if(list1->val < list2->val){
+            //add_with_tail(&new_head,&tail,list1->val);
+            if (new_head == NULL){
+                new_head = list1;
+                tail = new_head;
+            }else{
+                tail->next = list1;
+                tail = list1;
+            }
+            list1 = list1->next;
+        }else{
+            //add_with_tail(&new_head,&tail,list2->val);
+            if (new_head == NULL){
+                new_head = list2;
+                tail = new_head;
+            }else{
+                tail->next = list2;
+                tail = list2;
+            }
+            list2 = list2->next;
+        }
+    }
+    
+    if(list1 != NULL){
+        tail->next=list1;
+    }
+    if(list2 != NULL){
+        tail->next=list2;
+    }
+    
+    return new_head;
+}
+
+
+struct ListNode* mergeKLists(struct ListNode** lists, int listsSize) {
+    if (listsSize <= 0){
+        return NULL;
+    }
+    struct ListNode *head = lists[0];
+    struct ListNode *temp_list_head = *lists;
+
+    for(int i = 1; i < listsSize;i++){
+        head = mergeTwoLists(head,lists[i]);
+    }
+    return head;
+}
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+struct ListNode* swapPairs(struct ListNode* head){
+    if(head==NULL || head->next==NULL)
+    return head;
+    struct ListNode*x,*y,*z=NULL;
+    x=head;
+    y=head->next;
+    if(head->next->next!=NULL)
+    {
+        z=head->next->next;
+    }
+    head=y;
+    while(z!=NULL && z->next!=NULL)
+    {
+        y->next=x;
+        x->next=z->next;
+        x=z;
+        y=x->next;
+        z=y->next;
+    }
+    y->next=x;
+    x->next=z;
+    return head;
+}
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+
+struct ListNode* reverseKGroup(struct ListNode* head, int k) {
+    // Base case: if the current segment has less than k nodes, return head
+    struct ListNode* current = head;
+    int count = 0;
+    while (count < k && current) {
+        current = current->next;
+        count++;
+    }
+    if (count < k) {
+        return head;
+    }
+    
+    // Reverse the current segment
+    struct ListNode* prev = NULL;
+    struct ListNode* next_node = NULL;
+    current = head;
+    for (int i = 0; i < k; i++) {
+        next_node = current->next;
+        current->next = prev;
+        prev = current;
+        current = next_node;
+    }
+    
+    // Recursively reverse the next segment
+    head->next = reverseKGroup(current, k);
+    
+    return prev;
+}
+
